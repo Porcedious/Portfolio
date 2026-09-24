@@ -1,0 +1,19 @@
+<!-- Magnetic cursor (desktop only, hidden over the hero — see the component's own comment). -->
+<app-cursor></app-cursor>
+
+<!-- Global static grain layer (fixed z-index behind all sections) -->
+<app-global-background></app-global-background>
+
+<!-- Section nav — hidden while the hero is on screen, appears once scrolling
+     starts. Root-level sibling so it sits in the root stacking context,
+     independent of hero/content lifecycle. -->
+<app-navbar></app-navbar>
+
+<!-- Main Page Content Stream -->
+<main class="relative z-10 w-full min-h-screen">
+  <!-- Pristine Single Full-Viewport Landing Hero -->
+  <app-hero></app-hero>
+
+  <!-- Editorial Portfolio Content Stream -->
+  <app-portfolio-content></app-portfolio-content>
+</main>

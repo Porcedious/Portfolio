@@ -1,0 +1,132 @@
+@font-face {
+  font-family: "Helvetica Neue ME";
+  src: url("/assets/fonts/HelveticaNeueME.woff2") format("woff2"),
+       url("/assets/fonts/HelveticaNeueME.ttf") format("truetype"),
+       url("https://db.onlinewebfonts.com/t/95cecf452d3208890088a5b4c19c7ecf.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #09090b;
+    color: #efeee9;
+    font-family: 'Helvetica Neue ME', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/*
+ * Compositor layer policy.
+ *
+ * `will-change: transform` is ONLY valid on elements whose transform actually
+ * changes every frame. It is not a "make it faster" switch: each promoted
+ * element gets its own GPU texture (w * h * 4 bytes) that is held for the
+ * lifetime of the page and re-blended on every composited frame.
+ *
+ * The marquee is the one element on this page that is genuinely transformed
+ * continuously (GSAP tween), so it is the one element that gets promoted.
+ * Everything else is static and is cheaper left in the main layer.
+ */
+.marquee-track {
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout paint;
+  font-family: 'Helvetica Neue ME', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
+
+/* Custom Animation Utility Delays */
+.anim-fade-in {
+  animation: fade-in 1.2s ease-out both;
+}
+
+.anim-rise-in {
+  animation: rise-in 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.anim-fade-up {
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.anim-line {
+  animation: line-grow 1.1s cubic-bezier(0.76, 0, 0.24, 1) both;
+  transform-origin: left;
+}
+
+/* Stagger & Delay Utilities */
+.delay-300 { animation-delay: 300ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-900 { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
+.delay-1080 { animation-delay: 1080ms; }
+.delay-1150 { animation-delay: 1150ms; }
+.delay-1200 { animation-delay: 1200ms; }
+.delay-1230 { animation-delay: 1230ms; }
+.delay-1310 { animation-delay: 1310ms; }
+.delay-1400 { animation-delay: 1400ms; }
+.delay-1550 { animation-delay: 1550ms; }
+
+/* Custom Scrollbar for Drawer/Modals */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c5a059;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-in,
+  .anim-rise-in,
+  .anim-fade-up,
+  .anim-line {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Single static film-grain texture for the whole page. One GPU texture,
+ * uploaded once from a data-URI (no network round trip), never re-painted —
+ * unlike the video layer it replaced, this costs nothing per scroll frame.
+ */
+.grain-layer {
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+ * Suppresses the native system cursor while the custom magnetic cursor
+ * (CursorComponent) is active, everywhere except the hero — without this,
+ * the OS arrow and the custom dot/ring render on top of each other.
+ *
+ * `auto`, not `revert`: cursor is an inherited property, and `revert` only
+ * cancels *this element's own* author rule — an element with no UA cursor
+ * rule of its own (a plain <section>) still inherits `none` from body
+ * through the normal cascade. `auto` is the one keyword where that doesn't
+ * matter: its rendered cursor is decided per-element from context (pointer
+ * over a link, text-cursor in an input, arrow otherwise) rather than
+ * inherited, so it reproduces exactly what "no cursor rule at all" looked
+ * like before this component existed.
+ */
+html.ed-cursor-none body { cursor: none; }
+html.ed-cursor-none #hero,
+html.ed-cursor-none #hero * { cursor: auto; }
