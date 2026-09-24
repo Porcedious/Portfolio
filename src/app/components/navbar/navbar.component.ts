@@ -120,6 +120,7 @@ interface SectionLink {
 export class NavbarComponent implements OnDestroy {
   protected readonly links: SectionLink[] = [
     { id: 'about', label: 'About' },
+    { id: 'education', label: 'Education' },
     { id: 'expertise', label: 'Expertise' },
     { id: 'capabilities', label: 'Capabilities' },
     { id: 'projects', label: 'Projects' },
